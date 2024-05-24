@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const MessageSchema = new mongoose.Schema({
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
     text: String,
     file: String,
-}, { timestapm: true });
+}, { timestamps: true });
 
 const MessageModel = mongoose.model('Message', MessageSchema);
 

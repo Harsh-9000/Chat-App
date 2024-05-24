@@ -6,11 +6,11 @@ import axios from "axios";
 import Contact from "./Contact";
 
 export default function Chat() {
-
     const [ws, setWs] = useState(null);
     const [onlinePeople, setOnlinePeople] = useState({});
     const [offlinePeople, setOfflinePeople] = useState({});
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedUserDetails, setSelectedUserDetails] = useState(null);
     const [newMessageText, setNewMessageText] = useState('');
     const [messages, setMessages] = useState([]);
     const { username, id, setId, setUsername } = useContext(UserContext);
@@ -18,7 +18,7 @@ export default function Chat() {
 
     useEffect(() => {
         connectToWs();
-    }, []);
+    }, [selectedUserId]);
 
     function connectToWs() {
         const ws = new WebSocket('ws://localhost:3000');
@@ -28,7 +28,7 @@ export default function Chat() {
             setTimeout(() => {
                 console.log("Disconnected. Trying to reconnect.");
                 connectToWs();
-            });
+            }, 1000);
         });
     }
 
@@ -109,6 +109,9 @@ export default function Chat() {
             axios.get('/messages/' + selectedUserId).then(res => {
                 setMessages(res.data);
             });
+
+            const userDetails = onlinePeople[selectedUserId] ? { id: selectedUserId, username: onlinePeople[selectedUserId], online: true } : offlinePeople[selectedUserId];
+            setSelectedUserDetails(userDetails);
         }
     }, [selectedUserId]);
 
@@ -133,9 +136,7 @@ export default function Chat() {
 
     return (
         <div className="flex h-screen">
-
             <div className="bg-white w-1/3 flex flex-col">
-
                 <div className="flex-grow">
                     <Logo />
 
@@ -144,7 +145,7 @@ export default function Chat() {
                             key={userId}
                             online={true}
                             id={userId}
-                            username={onlinePeopleExclOurUser[userId]}
+                            username={onlinePeopleExclOurUser[userId] || 'Unknown User'}
                             onClick={() => setSelectedUserId(userId)}
                             selected={userId === selectedUserId}
                         />
@@ -177,7 +178,14 @@ export default function Chat() {
 
             </div>
 
-            <div className="flex flex-col bg-green-100 w-2/3 p-2">
+            <div className="flex flex-col bg-green-100 w-2/3">
+                {!!selectedUserDetails && (
+                    <div className="w-full h-11 bg-white flex items-center px-4">
+                        <div>
+                            <span className="font-bold">{selectedUserDetails.username}</span>
+                        </div>
+                    </div>
+                )}
                 <div className="flex-grow">
                     {!selectedUserId && (
                         <div className="flex h-full items-center justify-center">
@@ -187,8 +195,8 @@ export default function Chat() {
                         </div>
                     )}
 
-                    {!!selectedUserId && (
-                        <div className="relative h-full">
+                    {selectedUserId && (
+                        <div className="relative h-full m-2">
                             <div className="overflow-y-scroll absolute top-0 left-0 right-0 bottom-2">
                                 {messagesWithoutDupes.map(message => (
                                     <div key={message._id} className={(message.sender === id ? 'text-right' : 'text-left')}>
@@ -215,7 +223,7 @@ export default function Chat() {
                 </div>
 
                 {!!selectedUserId && (
-                    <form className="flex gap-2" onSubmit={sendMessage}>
+                    <form className="flex gap-2 m-2" onSubmit={sendMessage} >
                         <input
                             type="text"
                             className="bg-white flex-grow border p-2 rounded-sm"
@@ -240,7 +248,6 @@ export default function Chat() {
                     </form>
                 )}
             </div>
-
         </div>
     );
 }
