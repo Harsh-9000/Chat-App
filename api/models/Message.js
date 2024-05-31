@@ -1,11 +1,22 @@
 const mongoose = require('mongoose');
 
 const MessageSchema = new mongoose.Schema({
-    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
-    text: String,
-    file: String,
+    text: {
+        type: String,
+        default: ""
+    },
+    imageUrl: {
+        type: String,
+        default: ""
+    },
+    videoUrl: {
+        type: String,
+        default: ""
+    },
+    seen: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 const MessageModel = mongoose.model('Message', MessageSchema);

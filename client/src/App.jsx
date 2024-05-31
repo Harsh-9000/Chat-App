@@ -1,16 +1,15 @@
 import axios from "axios"
-import Routes from "./Routes"
-import { UserContextProvider } from "./UserContext";
+import { Outlet } from "react-router-dom";
 
 
 function App() {
-  axios.defaults.baseURL = 'http://localhost:3000';
+  axios.defaults.baseURL = 'http://localhost:3000/api';
   axios.defaults.withCredentials = true;
 
   return (
-    <UserContextProvider>
-      <Routes />
-    </UserContextProvider>
+    <main>
+      <Outlet />
+    </main>
   )
 }
 

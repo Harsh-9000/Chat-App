@@ -21,7 +21,7 @@ export default function Chat() {
     }, [selectedUserId]);
 
     function connectToWs() {
-        const ws = new WebSocket('ws://localhost:3000');
+        const ws = new WebSocket('ws://localhost:3000');    
         setWs(ws);
         ws.addEventListener('message', handleMessage);
         ws.addEventListener('close', () => {

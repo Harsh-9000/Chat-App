@@ -5,18 +5,19 @@ import { createContext, useEffect, useState } from "react";
 export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
-    const [username, setUsername] = useState(null);
+    const [email, setEmail] = useState(null);
     const [id, setId] = useState(null);
     useEffect(() => {
-        axios.get('/profile').then(response => {
+        axios.get('/user-details').then(response => {
+            console.log(response.data.data);
             setId(response.data.userId);
-            setUsername(response.data.username);
+            setEmail(response.data.username);
         });
     });
 
     return (
-        <UserContext.Provider value={{ username, setUsername, id, setId }}>
+        <UserContext.Provider value={{ email, setEmail, id, setId }}>
             {children}
         </UserContext.Provider>
     );
-} 
+}
