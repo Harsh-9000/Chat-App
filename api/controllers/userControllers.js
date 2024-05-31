@@ -57,6 +57,31 @@ async function updateUserDetails(req, res) {
     }
 }
 
+async function searchUser(req, res) {
+    try {
+        const { search } = req.body;
+        const query = new RegExp(search, "i", "g");
+
+        const user = await User.find({
+            "$or": [
+                { name: query },
+                { email: query }
+            ]
+        }).select("-password")
+
+        return res.json({
+            message: "User Found",
+            data: user,
+            success: true
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: err.message || err,
+            error: true
+        });
+    }
+}
+
 async function uploadImage(imageFile) {
     const b64 = Buffer.from(imageFile.buffer).toString('base64');
     const dataURI = `data:${imageFile.mimetype};base64,${b64}`;
@@ -64,4 +89,4 @@ async function uploadImage(imageFile) {
     return res.url;
 }
 
-module.exports = { userDetails, updateUserDetails }
+module.exports = { userDetails, updateUserDetails, searchUser }

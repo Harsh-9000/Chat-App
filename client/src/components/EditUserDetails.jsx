@@ -23,8 +23,6 @@ const EditUserDetails = ({ onClose, data }) => {
         const formData = new FormData();
         formData.append('name', name);
 
-        console.log(uploadPhoto instanceof File);
-
         if (uploadPhoto && uploadPhoto instanceof File) {
             formData.append('profile_pic', uploadPhoto);
         } else if (typeof uploadPhoto === 'string') {
@@ -41,7 +39,7 @@ const EditUserDetails = ({ onClose, data }) => {
 
             if (response.data?.success) {
                 toast.success('Profile updated successfully!');
-                fetchUserDetails(dispatch);
+                await fetchUserDetails(dispatch);
                 onClose();
             } else {
                 toast.error('Failed to update profile');

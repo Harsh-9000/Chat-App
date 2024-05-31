@@ -1,10 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import Chat from '../assets/chat.jpg';
-import Logo from "../Logo";
+import Logo from "./Logo";
 import { IoClose } from "react-icons/io5";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 import { useDispatch } from 'react-redux';
 import { setToken } from "../redux/userSlice";
 import { fetchUserDetails } from "../api";
@@ -55,7 +54,7 @@ export default function RegisterAndLoginForm() {
             }
 
             if (response.data?.success) {
-                fetchUserDetails(dispatch);
+                await fetchUserDetails(dispatch);
             }
 
         } catch (error) {
@@ -176,7 +175,6 @@ export default function RegisterAndLoginForm() {
                     <img src={Chat} alt="" className="w-[550px]" />
                 </div>
             </div>
-            <ToastContainer />
         </>
     )
 }

@@ -17,7 +17,8 @@ const router = express.Router();
 router.post('/register', upload.single('profile_pic'), authControllers.registerUser)
 router.post('/login', authControllers.loginUser)
 router.post('/logout', authControllers.logoutUser)
-router.get("/user-details", userControllers.userDetails)
-router.post("/update-user", upload.single('profile_pic'), userControllers.updateUserDetails)
+router.get('/user-details', userControllers.userDetails)
+router.post('/update-user', upload.single('profile_pic'), userControllers.updateUserDetails)
+router.post('/search-user', userControllers.searchUser)
 
 module.exports = router

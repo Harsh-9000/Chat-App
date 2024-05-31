@@ -6,7 +6,7 @@ export const fetchUserDetails = async (dispatch) => {
         const response = await axios({ url: '/user-details', withCredentials: true });
         dispatch(setUser(response.data.data));
 
-        if (response.data.logout) {
+        if (response.data.data.logout) {
             dispatch(logout());
         }
     } catch (error) {
