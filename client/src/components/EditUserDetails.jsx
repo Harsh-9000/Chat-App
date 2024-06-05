@@ -63,7 +63,7 @@ const EditUserDetails = ({ onClose, data }) => {
     };
 
     return (
-        <div className="fixed top-0 bottom-0 left-0 right-0 bg-gray-700 bg-opacity-40 flex justify-center items-center">
+        <div className="fixed top-0 bottom-0 left-0 right-0 bg-gray-700 bg-opacity-40 flex justify-center items-center z-10">
             <div className="bg-white p-4 m-1 rounded w-full max-w-sm">
                 <h2 className="font-semibold">Profile Details</h2>
                 <p className="text-sm">Edit User Details</p>
@@ -85,7 +85,6 @@ const EditUserDetails = ({ onClose, data }) => {
                         <div>Photo:</div>
                         <div className="my-1 flex items-center gap-4">
                             <Avatar
-                                userId={data?._id}
                                 width={40}
                                 height={40}
                                 imageUrl={uploadPhoto instanceof File ? URL.createObjectURL(uploadPhoto) : uploadPhoto}

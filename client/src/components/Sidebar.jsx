@@ -3,14 +3,16 @@ import { FaUserPlus } from "react-icons/fa"
 import { NavLink } from "react-router-dom"
 import { BiLogOut } from "react-icons/bi";
 import { AiOutlineUserAdd } from "react-icons/ai";
+import { FaImage, FaVideo } from "react-icons/fa6";
 import Avatar from "./Avatar"
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditUserDetails from "./EditUserDetails";
 import SearchUser from "./SearchUser";
 import { logout } from "../redux/userSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useSocket } from "../contexts/SocketContext";
 
 const Sidebar = () => {
     const user = useSelector(state => state?.user)
@@ -18,6 +20,7 @@ const Sidebar = () => {
     const [allUser, setAllUser] = useState([])
     const [openSearchUser, setOpenSearchUser] = useState(false)
     const dispatch = useDispatch();
+    const socket = useSocket();
 
     const handleLogout = async () => {
         try {
@@ -29,12 +32,40 @@ const Sidebar = () => {
         } catch (error) {
             toast.error(error?.response?.data?.message || error.message);
         } finally {
+            if (socket) {
+                socket.emit('logout');
+            }
             setEditUserOpen(false);
             setAllUser([]);
             setOpenSearchUser(false);
+            localStorage.removeItem('token');
             dispatch(logout());
         }
     };
+
+    useEffect(() => {
+        if (socket) {
+            socket.emit('sidebar', user?._id)
+
+            socket.on('chat', (data) => {
+                const chatUserData = data.map((chatUser) => {
+                    if (chatUser?.recipient?._id !== user?._id) {
+                        return {
+                            ...chatUser,
+                            userDetails: chatUser?.recipient
+                        }
+                    } else {
+                        return {
+                            ...chatUser,
+                            userDetails: chatUser?.sender
+                        }
+                    }
+                })
+
+                setAllUser(chatUserData)
+            })
+        }
+    }, [socket, user])
 
     return (
         <div className="w-full h-full grid grid-cols-[48px,1fr] bg-white">
@@ -78,6 +109,54 @@ const Sidebar = () => {
                                 <p className="text-lg text-center text-slate-400">Explore users to start a coversation.</p>
                             </div>
                         )
+                    }
+
+                    {
+                        allUser.map((chat) => {
+                            return (
+                                <NavLink to={"/" + chat?.userDetails?._id} key={chat?._id} className='flex items-center gap-2 py-3 px-2 border border-transparent hover:border-green-700 rounded hover:bg-slate-100 cursor-pointer'>
+                                    <div>
+                                        <Avatar
+                                            imageUrl={chat?.userDetails?.profile_pic}
+                                            name={chat?.userDetails?.name}
+                                            width={40}
+                                            height={40}
+                                            userId={chat?.userDetails?._id}
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 className='text-ellipsis line-clamp-1 font-semibold text-base'>{chat?.userDetails?.name}</h3>
+                                        <div className='text-slate-500 text-xs flex items-center gap-1'>
+                                            <div className='flex items-center gap-1'>
+                                                {
+                                                    chat?.lastMessage?.imageUrl && (
+                                                        <div className='flex items-center gap-1'>
+                                                            <span><FaImage /></span>
+                                                            {!chat?.lastMessage?.text && <span>Image</span>}
+                                                        </div>
+                                                    )
+                                                }
+                                                {
+                                                    chat?.lastMessage?.videoUrl && (
+                                                        <div className='flex items-center gap-1'>
+                                                            <span><FaVideo /></span>
+                                                            {!chat?.lastMessage?.text && <span>Video</span>}
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                            <p className='text-ellipsis line-clamp-1'>{chat?.lastMessage?.text}</p>
+                                        </div>
+                                    </div>
+                                    {
+                                        Boolean(chat?.unseenMessages) && (
+                                            <p className='text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-green-700 text-white font-semibold rounded-full'>{chat?.unseenMessages}</p>
+                                        )
+                                    }
+
+                                </NavLink>
+                            )
+                        })
                     }
                 </div>
             </div>

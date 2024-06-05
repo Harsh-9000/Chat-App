@@ -1,6 +1,7 @@
 const cloudinary = require('cloudinary');
 const getUserDetailsFromToken = require("../helpers/getUserDetailsFromToken")
 const User = require("../models/User")
+const { uploadImage } = require('../helpers/cloudinary')
 
 async function userDetails(req, res) {
     try {
@@ -60,33 +61,39 @@ async function updateUserDetails(req, res) {
 async function searchUser(req, res) {
     try {
         const { search } = req.body;
-        const query = new RegExp(search, "i", "g");
+        const token = req.cookies.token || "";
+        const currentUser = await getUserDetailsFromToken(token);
 
-        const user = await User.find({
+        if (!currentUser) {
+            return res.status(401).json({
+                message: "Unauthorized",
+                error: true
+            });
+        }
+
+        const query = new RegExp(search, "i");
+
+        const users = await User.find({
             "$or": [
                 { name: query },
                 { email: query }
             ]
-        }).select("-password")
+        }).select("-password");
+
+        // Filter out the current user from the results
+        const filteredUsers = users.filter(user => user._id.toString() !== currentUser._id.toString());
 
         return res.json({
             message: "User Found",
-            data: user,
+            data: filteredUsers,
             success: true
-        })
+        });
     } catch (err) {
         return res.status(500).json({
             message: err.message || err,
             error: true
         });
     }
-}
-
-async function uploadImage(imageFile) {
-    const b64 = Buffer.from(imageFile.buffer).toString('base64');
-    const dataURI = `data:${imageFile.mimetype};base64,${b64}`;
-    const res = await cloudinary.uploader.upload(dataURI);
-    return res.url;
 }
 
 module.exports = { userDetails, updateUserDetails, searchUser }

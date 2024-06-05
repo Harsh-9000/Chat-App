@@ -5,23 +5,43 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserDetails } from "../api";
 import Sidebar from "../components/Sidebar";
 import Logo from "../components/Logo";
+import { useSocket } from '../contexts/SocketContext.jsx';
+import { setOnlineUser } from "../redux/userSlice";
 
 const Home = () => {
     const [loading, setLoading] = useState(true);
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
-    const location = useLocation()
-    const basePath = location.pathname === '/'
+    const location = useLocation();
+    const basePath = location.pathname === '/';
+    const socket = useSocket();
 
     useEffect(() => {
         const loadUserDetails = async () => {
             setLoading(true);
-            await fetchUserDetails(dispatch);
+            try {
+                await fetchUserDetails(dispatch);
+            } catch (error) {
+                console.error("Error loading user details", error);
+            }
             setLoading(false);
         };
 
         loadUserDetails();
     }, [dispatch]);
+
+    useEffect(() => {
+        if (socket) {
+            const handleOnlineUser = (data) => {
+                dispatch(setOnlineUser(data));
+            };
+            socket.on('onlineUser', handleOnlineUser);
+
+            return () => {
+                socket.off('onlineUser', handleOnlineUser);
+            };
+        }
+    }, [socket, dispatch]);
 
     if (loading) {
         return <div>Loading...</div>;

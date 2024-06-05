@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setToken } from "../redux/userSlice";
 import { fetchUserDetails } from "../api";
 
-export default function RegisterAndLoginForm() {
+const RegisterAndLoginForm = () => {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -178,3 +178,5 @@ export default function RegisterAndLoginForm() {
         </>
     )
 }
+
+export default RegisterAndLoginForm

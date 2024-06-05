@@ -6,7 +6,7 @@ import router from './routes/Routes.jsx'
 import { RouterProvider } from 'react-router-dom'
 import { store } from './redux/store.js'
 import { Provider } from 'react-redux'
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

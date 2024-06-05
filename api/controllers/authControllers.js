@@ -1,7 +1,7 @@
 const User = require("../models/User")
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken');
-const cloudinary = require('cloudinary');
+const { uploadImage } = require('../helpers/cloudinary')
 
 async function registerUser(req, res) {
     try {
@@ -120,13 +120,6 @@ async function logoutUser(req, res) {
             error: true,
         });
     }
-}
-
-async function uploadImage(imageFile) {
-    const b64 = Buffer.from(imageFile.buffer).toString('base64');
-    const dataURI = `data:${imageFile.mimetype};base64,${b64}`;
-    const res = await cloudinary.uploader.upload(dataURI);
-    return res.url;
 }
 
 module.exports = { registerUser, loginUser, logoutUser };
