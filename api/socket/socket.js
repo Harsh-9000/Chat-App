@@ -127,7 +127,7 @@ io.on('connection', async (socket) => {
             ]
         })
 
-        const chatMessageId = chat.messages || [];
+        const chatMessageId = chat?.messages || [];
 
         await Message.updateMany(
             { _id: { "$in": chatMessageId }, senderId: senderId },
