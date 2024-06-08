@@ -82,10 +82,12 @@ async function loginUser(req, res) {
                     });
                 }
 
+                console.log(process.env.NODE_ENV === 'production');
+
                 res.cookie('token', token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'None', // Set SameSite to None
+                    sameSite: 'None',
                     maxAge: 86400000,
                 })
 
