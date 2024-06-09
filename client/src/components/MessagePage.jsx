@@ -196,8 +196,17 @@ const MessagePage = () => {
                 <div className='flex flex-col gap-2 py-2 mx-2' ref={currentMessage}>
                     {
                         allMessage.map((msg, index) => {
+                            const isSender = user._id === msg?.senderId;
                             return (
-                                <div key={index} className={` p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${user._id === msg?.senderId ? "ml-auto bg-teal-100" : "bg-white"}`}>
+                                <div
+                                    key={index}
+                                    className={`p-1 py-1 rounded-xl w-fit max-w-[280px] md:max-w-sm lg:max-w-md 
+                        ${isSender ? "ml-auto bg-customGreen" : "bg-customWhite"} 
+                        shadow-md border border-gray-300 
+                        ${isSender ? "rounded-tr-none" : "rounded-tl-none"} 
+                        min-w-[100px] // Add your desired min-width here
+                    `}
+                                >
                                     <div className='w-full relative'>
                                         {
                                             msg?.imageUrl && (
@@ -218,12 +227,14 @@ const MessagePage = () => {
                                         }
                                     </div>
                                     <p className='px-2'>{msg.text}</p>
-                                    <p className='text-xs ml-auto w-fit'>{moment(msg.createdAt).format('hh:mm')}</p>
+                                    <p className='text-xs ml-auto w-fit p-1'>{moment(msg.createdAt).format('hh:mm a')}</p>
                                 </div>
                             )
                         })
                     }
                 </div>
+
+
 
                 {/* Uploaded Image Display */}
                 {

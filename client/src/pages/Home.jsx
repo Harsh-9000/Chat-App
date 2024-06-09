@@ -54,7 +54,7 @@ const Home = () => {
 
     if (user?._id) {
         return (
-            <div className="grid lg:grid-cols-[300px,1fr] h-screen max-h-screen bg-green-100">
+            <div className="grid lg:grid-cols-[300px,1fr] h-screen max-h-screen bg-customGray">
                 <section className={`bg-green-100 ${!basePath && "hidden"} lg:block`}>
                     <Sidebar />
                 </section>
