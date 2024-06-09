@@ -7,6 +7,7 @@ import Sidebar from "../components/Sidebar";
 import Logo from "../components/Logo";
 import { useSocket } from '../contexts/SocketContext.jsx';
 import { setOnlineUser } from "../redux/userSlice";
+import Loading from "../components/Loading.jsx";
 
 const Home = () => {
     const [loading, setLoading] = useState(true);
@@ -44,7 +45,7 @@ const Home = () => {
     }, [socket, dispatch]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div><Loading /></div>;
     }
 
     if (user?._id) {
